@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -14,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { StringToNumPipe } from 'src/pipes/string-to-num.pipe';
 import { UserDecorator } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -26,6 +29,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Создать комментарий к данной карте' })
   @ApiBody({
@@ -49,10 +53,11 @@ export class CommentController {
   @Post()
   async create(
     @Body() createCommentDto: CreateCommentDto,
-    @Param('cardId') cardId: string,
+    @Param('cardId', StringToNumPipe)
+    cardId: number,
     @UserDecorator() user: UserEntity,
   ) {
-    return this.commentService.create(createCommentDto, +cardId, user);
+    return this.commentService.create(createCommentDto, cardId, user);
   }
 
   @UseGuards(AuthGuard)
@@ -67,8 +72,8 @@ export class CommentController {
   })
   @ApiBearerAuth()
   @Get()
-  async findAll(@Param('cardId') cardId: string) {
-    return this.commentService.findAll(+cardId);
+  async findAll(@Param('cardId', StringToNumPipe) cardId: number) {
+    return this.commentService.findAll(cardId);
   }
 
   @UseGuards(AuthGuard)
@@ -84,12 +89,13 @@ export class CommentController {
   @ApiBearerAuth()
   @Get(':commentId')
   async findOne(
-    @Param('commentId') id: string,
-    @Param('cardId') cardId: string,
+    @Param('commentId', StringToNumPipe) id: number,
+    @Param('cardId', StringToNumPipe) cardId: number,
   ) {
-    return this.commentService.findOne(+id, +cardId);
+    return this.commentService.findOne(id, cardId);
   }
 
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard, CommentOwnerGuard)
   @ApiOperation({ summary: 'Изменить комментарий карты по ID' })
   @ApiResponse({
@@ -103,11 +109,11 @@ export class CommentController {
   @ApiBearerAuth()
   @Patch(':commentId')
   async update(
-    @Param('commentId') id: string,
+    @Param('commentId', StringToNumPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto,
-    @Param('cardId') cardId: string,
+    @Param('cardId', StringToNumPipe) cardId: number,
   ) {
-    return this.commentService.update(+id, updateCommentDto, +cardId);
+    return this.commentService.update(id, updateCommentDto, cardId);
   }
 
   @UseGuards(AuthGuard, CommentOwnerGuard)
@@ -123,9 +129,9 @@ export class CommentController {
   @ApiBearerAuth()
   @Delete(':commentId')
   async remove(
-    @Param('commentId') id: string,
-    @Param('cardId') cardId: string,
+    @Param('commentId', StringToNumPipe) id: number,
+    @Param('cardId', StringToNumPipe) cardId: number,
   ) {
-    return this.commentService.remove(+id, +cardId);
+    return this.commentService.remove(id, cardId);
   }
 }

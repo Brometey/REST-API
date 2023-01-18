@@ -1,14 +1,12 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { CardModule } from './card/card.module';
 import { ColumnModule } from './column/column.module';
 import { CommentModule } from './comment/comment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from 'db/data-source';
 import { ConfigModule } from '@nestjs/config';
 import { AuthMiddleware } from './user/middlewares/auth.middleware';
+import { dataSourceOptions } from 'db/data-source';
 
 @Module({
   imports: [
@@ -19,8 +17,6 @@ import { AuthMiddleware } from './user/middlewares/auth.middleware';
     CommentModule,
     TypeOrmModule.forRoot(dataSourceOptions),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
@@ -29,8 +25,6 @@ export class AppModule {
       .exclude(
         { path: '/user/register', method: RequestMethod.ALL },
         { path: '/user/login', method: RequestMethod.ALL },
-        // { path: "/columns/**", method: RequestMethod.GET},
-        // { path: "/cards/**", method: RequestMethod.GET}
       )
       .forRoutes({
         path: '*',

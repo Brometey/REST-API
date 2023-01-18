@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -14,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { StringToNumPipe } from 'src/pipes/string-to-num.pipe';
 import { UserDecorator } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -26,6 +29,7 @@ import { UpdateColumnDto } from './dto/update-column.dto';
 export class ColumnController {
   constructor(private readonly columnService: ColumnService) {}
 
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Создать колонку' })
   @ApiBody({
@@ -73,10 +77,11 @@ export class ColumnController {
   })
   @ApiBearerAuth()
   @Get(':columnId')
-  async findOne(@Param('columnId') id: string) {
-    return this.columnService.findOne(+id);
+  async findOne(@Param('columnId', StringToNumPipe) id: number) {
+    return this.columnService.findOne(id);
   }
 
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard, ColumnOwnerGuard)
   @ApiOperation({ summary: 'изменить колонку' })
   @ApiBody({
@@ -99,10 +104,10 @@ export class ColumnController {
   @ApiBearerAuth()
   @Patch(':columnId')
   async update(
-    @Param('columnId') id: string,
+    @Param('columnId', StringToNumPipe) id: number,
     @Body() updateColumnDto: UpdateColumnDto,
   ) {
-    return await this.columnService.update(+id, updateColumnDto);
+    return await this.columnService.update(id, updateColumnDto);
   }
 
   @UseGuards(AuthGuard, ColumnOwnerGuard)
@@ -117,7 +122,7 @@ export class ColumnController {
   })
   @ApiBearerAuth()
   @Delete(':columnId')
-  async remove(@Param('columnId') id: string) {
-    return await this.columnService.remove(+id);
+  async remove(@Param('columnId', StringToNumPipe) id: number) {
+    return await this.columnService.remove(id);
   }
 }

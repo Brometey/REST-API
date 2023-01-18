@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -14,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { StringToNumPipe } from 'src/pipes/string-to-num.pipe';
 import { UserDecorator } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -26,6 +29,7 @@ import { UpdateCardDto } from './dto/update-card.dto';
 export class CardController {
   constructor(private readonly cardService: CardService) {}
 
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Создать карту в данной колонке' })
   @ApiBody({
@@ -49,10 +53,10 @@ export class CardController {
   @Post()
   async create(
     @Body() createCardDto: CreateCardDto,
-    @Param('columnId') columnId: string,
+    @Param('columnId', StringToNumPipe) columnId: number,
     @UserDecorator() user: UserEntity,
   ) {
-    return await this.cardService.create(createCardDto, +columnId, user);
+    return await this.cardService.create(createCardDto, columnId, user);
   }
 
   @UseGuards(AuthGuard)
@@ -67,8 +71,8 @@ export class CardController {
   })
   @ApiBearerAuth()
   @Get()
-  findAll(@Param('columnId') columnId: string) {
-    return this.cardService.findAll(+columnId);
+  findAll(@Param('columnId', StringToNumPipe) columnId: number) {
+    return this.cardService.findAll(columnId);
   }
 
   @UseGuards(AuthGuard)
@@ -84,12 +88,13 @@ export class CardController {
   @ApiBearerAuth()
   @Get(':cardId')
   async findOne(
-    @Param('cardId') id: string,
-    @Param('columnId') columnId: string,
+    @Param('cardId', StringToNumPipe) id: number,
+    @Param('columnId', StringToNumPipe) columnId: number,
   ) {
-    return await this.cardService.findOne(+id, +columnId);
+    return await this.cardService.findOne(id, columnId);
   }
 
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard, CardOwnerGuard)
   @ApiOperation({ summary: 'Изменить карту колонки' })
   @ApiResponse({
@@ -103,11 +108,11 @@ export class CardController {
   @ApiBearerAuth()
   @Patch(':cardId')
   update(
-    @Param('cardId') id: string,
+    @Param('cardId', StringToNumPipe) id: number,
     @Body() updateCardDto: UpdateCardDto,
-    @Param('columnId') columnId: string,
+    @Param('columnId', StringToNumPipe) columnId: number,
   ) {
-    return this.cardService.update(+id, updateCardDto, +columnId);
+    return this.cardService.update(id, updateCardDto, columnId);
   }
 
   @UseGuards(AuthGuard, CardOwnerGuard)
@@ -122,7 +127,10 @@ export class CardController {
   })
   @ApiBearerAuth()
   @Delete(':cardId')
-  remove(@Param('cardId') id: string, @Param('columnId') columnId: string) {
-    return this.cardService.remove(+id, +columnId);
+  remove(
+    @Param('cardId', StringToNumPipe) id: number,
+    @Param('columnId', StringToNumPipe) columnId: number,
+  ) {
+    return this.cardService.remove(id, columnId);
   }
 }
