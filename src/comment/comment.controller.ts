@@ -72,7 +72,7 @@ export class CommentController {
   })
   @ApiBearerAuth()
   @Get()
-  async findAll(@Param('cardId', StringToNumPipe) cardId: number) {
+  async findAll(@Param('cardId') cardId: number) {
     return this.commentService.findAll(cardId);
   }
 
@@ -109,9 +109,9 @@ export class CommentController {
   @ApiBearerAuth()
   @Patch(':commentId')
   async update(
-    @Param('commentId', StringToNumPipe) id: number,
+    @Param('commentId') id: number,
     @Body() updateCommentDto: UpdateCommentDto,
-    @Param('cardId', StringToNumPipe) cardId: number,
+    @Param('cardId') cardId: number,
   ) {
     return this.commentService.update(id, updateCommentDto, cardId);
   }
@@ -129,8 +129,8 @@ export class CommentController {
   @ApiBearerAuth()
   @Delete(':commentId')
   async remove(
-    @Param('commentId', StringToNumPipe) id: number,
-    @Param('cardId', StringToNumPipe) cardId: number,
+    @Param('commentId') id: number,
+    @Param('cardId') cardId: number,
   ) {
     return this.commentService.remove(id, cardId);
   }

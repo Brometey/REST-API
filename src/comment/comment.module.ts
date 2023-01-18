@@ -5,10 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentEntity } from './entities/comment.entity';
 import { CardEntity } from 'src/card/entities/card.entity';
 import { CardModule } from 'src/card/card.module';
+import { CommentRepository } from 'src/repositories/comment.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CommentEntity, CardEntity]), CardModule],
+  imports: [
+    TypeOrmModule.forFeature([CommentEntity, CardEntity, CommentRepository]),
+    CardModule,
+  ],
   controllers: [CommentController],
-  providers: [CommentService],
+  providers: [CommentService, CommentRepository],
 })
 export class CommentModule {}

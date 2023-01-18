@@ -16,7 +16,6 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { StringToNumPipe } from 'src/pipes/string-to-num.pipe';
 import { UserDecorator } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -53,7 +52,7 @@ export class CardController {
   @Post()
   async create(
     @Body() createCardDto: CreateCardDto,
-    @Param('columnId', StringToNumPipe) columnId: number,
+    @Param('columnId') columnId: number,
     @UserDecorator() user: UserEntity,
   ) {
     return await this.cardService.create(createCardDto, columnId, user);
@@ -71,7 +70,7 @@ export class CardController {
   })
   @ApiBearerAuth()
   @Get()
-  findAll(@Param('columnId', StringToNumPipe) columnId: number) {
+  findAll(@Param('columnId') columnId: number) {
     return this.cardService.findAll(columnId);
   }
 
@@ -88,8 +87,8 @@ export class CardController {
   @ApiBearerAuth()
   @Get(':cardId')
   async findOne(
-    @Param('cardId', StringToNumPipe) id: number,
-    @Param('columnId', StringToNumPipe) columnId: number,
+    @Param('cardId') id: number,
+    @Param('columnId') columnId: number,
   ) {
     return await this.cardService.findOne(id, columnId);
   }
@@ -108,9 +107,9 @@ export class CardController {
   @ApiBearerAuth()
   @Patch(':cardId')
   update(
-    @Param('cardId', StringToNumPipe) id: number,
+    @Param('cardId') id: number,
     @Body() updateCardDto: UpdateCardDto,
-    @Param('columnId', StringToNumPipe) columnId: number,
+    @Param('columnId') columnId: number,
   ) {
     return this.cardService.update(id, updateCardDto, columnId);
   }
@@ -127,10 +126,7 @@ export class CardController {
   })
   @ApiBearerAuth()
   @Delete(':cardId')
-  remove(
-    @Param('cardId', StringToNumPipe) id: number,
-    @Param('columnId', StringToNumPipe) columnId: number,
-  ) {
+  remove(@Param('cardId') id: number, @Param('columnId') columnId: number) {
     return this.cardService.remove(id, columnId);
   }
 }

@@ -77,7 +77,7 @@ export class ColumnController {
   })
   @ApiBearerAuth()
   @Get(':columnId')
-  async findOne(@Param('columnId', StringToNumPipe) id: number) {
+  async findOne(@Param('columnId') id: number) {
     return this.columnService.findOne(id);
   }
 
@@ -122,7 +122,7 @@ export class ColumnController {
   })
   @ApiBearerAuth()
   @Delete(':columnId')
-  async remove(@Param('columnId', StringToNumPipe) id: number) {
+  async remove(@Param('columnId') id: number) {
     return await this.columnService.remove(id);
   }
 }
