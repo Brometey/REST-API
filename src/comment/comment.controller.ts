@@ -9,6 +9,7 @@ import {
   UseGuards,
   ValidationPipe,
   UsePipes,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,7 +17,6 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { StringToNumPipe } from 'src/pipes/string-to-num.pipe';
 import { UserDecorator } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -53,7 +53,7 @@ export class CommentController {
   @Post()
   async create(
     @Body() createCommentDto: CreateCommentDto,
-    @Param('cardId', StringToNumPipe)
+    @Param('cardId', ParseIntPipe)
     cardId: number,
     @UserDecorator() user: UserEntity,
   ) {
@@ -72,7 +72,7 @@ export class CommentController {
   })
   @ApiBearerAuth()
   @Get()
-  async findAll(@Param('cardId') cardId: number) {
+  async findAll(@Param('cardId', ParseIntPipe) cardId: number) {
     return this.commentService.findAll(cardId);
   }
 
@@ -89,8 +89,8 @@ export class CommentController {
   @ApiBearerAuth()
   @Get(':commentId')
   async findOne(
-    @Param('commentId', StringToNumPipe) id: number,
-    @Param('cardId', StringToNumPipe) cardId: number,
+    @Param('commentId', ParseIntPipe) id: number,
+    @Param('cardId', ParseIntPipe) cardId: number,
   ) {
     return this.commentService.findOne(id, cardId);
   }
@@ -109,9 +109,9 @@ export class CommentController {
   @ApiBearerAuth()
   @Patch(':commentId')
   async update(
-    @Param('commentId') id: number,
+    @Param('commentId', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto,
-    @Param('cardId') cardId: number,
+    @Param('cardId', ParseIntPipe) cardId: number,
   ) {
     return this.commentService.update(id, updateCommentDto, cardId);
   }
@@ -129,8 +129,8 @@ export class CommentController {
   @ApiBearerAuth()
   @Delete(':commentId')
   async remove(
-    @Param('commentId') id: number,
-    @Param('cardId') cardId: number,
+    @Param('commentId', ParseIntPipe) id: number,
+    @Param('cardId', ParseIntPipe) cardId: number,
   ) {
     return this.commentService.remove(id, cardId);
   }

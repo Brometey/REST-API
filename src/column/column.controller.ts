@@ -9,6 +9,7 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,7 +17,6 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { StringToNumPipe } from 'src/pipes/string-to-num.pipe';
 import { UserDecorator } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { AuthGuard } from 'src/user/guards/auth.guard';
@@ -77,7 +77,7 @@ export class ColumnController {
   })
   @ApiBearerAuth()
   @Get(':columnId')
-  async findOne(@Param('columnId') id: number) {
+  async findOne(@Param('columnId', ParseIntPipe) id: number) {
     return this.columnService.findOne(id);
   }
 
@@ -104,7 +104,7 @@ export class ColumnController {
   @ApiBearerAuth()
   @Patch(':columnId')
   async update(
-    @Param('columnId', StringToNumPipe) id: number,
+    @Param('columnId', ParseIntPipe) id: number,
     @Body() updateColumnDto: UpdateColumnDto,
   ) {
     return await this.columnService.update(id, updateColumnDto);
@@ -122,7 +122,7 @@ export class ColumnController {
   })
   @ApiBearerAuth()
   @Delete(':columnId')
-  async remove(@Param('columnId') id: number) {
+  async remove(@Param('columnId', ParseIntPipe) id: number) {
     return await this.columnService.remove(id);
   }
 }

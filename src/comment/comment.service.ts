@@ -6,7 +6,6 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { CommentEntity } from './entities/comment.entity';
 
 @Injectable()
 export class CommentService {

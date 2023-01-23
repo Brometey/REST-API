@@ -9,6 +9,7 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -52,7 +53,7 @@ export class CardController {
   @Post()
   async create(
     @Body() createCardDto: CreateCardDto,
-    @Param('columnId') columnId: number,
+    @Param('columnId', ParseIntPipe) columnId: number,
     @UserDecorator() user: UserEntity,
   ) {
     return await this.cardService.create(createCardDto, columnId, user);
@@ -70,7 +71,7 @@ export class CardController {
   })
   @ApiBearerAuth()
   @Get()
-  findAll(@Param('columnId') columnId: number) {
+  findAll(@Param('columnId', ParseIntPipe) columnId: number) {
     return this.cardService.findAll(columnId);
   }
 
@@ -87,8 +88,8 @@ export class CardController {
   @ApiBearerAuth()
   @Get(':cardId')
   async findOne(
-    @Param('cardId') id: number,
-    @Param('columnId') columnId: number,
+    @Param('cardId', ParseIntPipe) id: number,
+    @Param('columnId', ParseIntPipe) columnId: number,
   ) {
     return await this.cardService.findOne(id, columnId);
   }
@@ -107,9 +108,9 @@ export class CardController {
   @ApiBearerAuth()
   @Patch(':cardId')
   update(
-    @Param('cardId') id: number,
+    @Param('cardId', ParseIntPipe) id: number,
     @Body() updateCardDto: UpdateCardDto,
-    @Param('columnId') columnId: number,
+    @Param('columnId', ParseIntPipe) columnId: number,
   ) {
     return this.cardService.update(id, updateCardDto, columnId);
   }
@@ -126,7 +127,10 @@ export class CardController {
   })
   @ApiBearerAuth()
   @Delete(':cardId')
-  remove(@Param('cardId') id: number, @Param('columnId') columnId: number) {
+  remove(
+    @Param('cardId', ParseIntPipe) id: number,
+    @Param('columnId', ParseIntPipe) columnId: number,
+  ) {
     return this.cardService.remove(id, columnId);
   }
 }
